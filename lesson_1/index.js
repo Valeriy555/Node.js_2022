@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path')
 
-const sortBoysFolder = () => {
+const sortFolder = (read,gender, write) => {
 
-    fs.readdir('./boys', (err, files) => {
+    fs.readdir(path.join(__dirname, read), (err, files) => {
         if (err) return console.log(err);
 
         files.forEach((file) => {
-            const redFolderPath = path.join(__dirname, 'boys', file)
+            const redFolderPath = path.join(__dirname, read, file)
 
             fs.readFile(redFolderPath, (err, data) => {
 
@@ -15,8 +15,8 @@ const sortBoysFolder = () => {
 
                 const user = JSON.parse(data.toString());
 
-                if (user.gender === 'female') {
-                    fs.rename(redFolderPath, path.join(__dirname, 'girls', file), (err) => {
+                if (user.gender === gender) {
+                    fs.rename(redFolderPath, path.join(__dirname, write, file), (err) => {
                         if (err) return console.log(err);
                     });
                 }
@@ -25,31 +25,7 @@ const sortBoysFolder = () => {
     });
 }
 
-sortBoysFolder();
+sortFolder('girls','male', 'boys');
+sortFolder('boys','female','girls');
 
 
-const sortGirlsFolder = () => {
-
-    fs.readdir('./girls', (err, files) => {
-        if (err) return console.log(err);
-
-        files.forEach((file) => {
-            const redFolderPath = path.join(__dirname, 'girls', file)
-
-            fs.readFile(redFolderPath, (err, data) => {
-
-                if (err) return console.log(err);
-
-                const user = JSON.parse(data.toString());
-
-                if (user.gender === 'male') {
-                    fs.rename(redFolderPath, path.join(__dirname, 'boys', file), (err) => {
-                        if (err) return console.log(err);
-                    });
-                }
-            });
-        });
-    });
-}
-
-sortGirlsFolder();
