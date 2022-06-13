@@ -18,12 +18,19 @@ app.get('/users', (req,res) => {
     res.json(users);
 });
 
+// CREATE
 
+app.get('/users/create',(req,res) =>{
+    users.push({
+      name: 'TestCreate',
+      age: Math.random()*100
+    })
+})
 
 app.get ('/users/:id', (req,res) => {
 const userIndex = +req.params.id
 
-    if(userIndex < 0){
+    if(isNaN(userIndex) || userIndex < 0){
         res.status(400).json('Please enter valid ID')
         return;
     }
@@ -36,4 +43,5 @@ const userIndex = +req.params.id
 
     res.json(user);
 });
+
 
