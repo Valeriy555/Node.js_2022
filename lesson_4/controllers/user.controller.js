@@ -1,41 +1,34 @@
-const {fileService} = require("../services");
+const {fileService, userService} = require("../services");
 
 module.exports = {
 
-    findUsers: async (req, res) => {
-        const users = await fileService.reader();
-        res.json(users);
+    findUsers: async (req, res, next) => {
+        try {
+            const users = await userService.findUsers();
+            res.json(users);
+        } catch (e) {
+            next(e);
+        }
     },
 
 
-    createUser: async (req, res) => {
-        const {name, age} = req.body;
-        if (!Number.isInteger(age) || age < 18) { // если число не целое или меньш 18
-            return res.status(400).json('Set valid age')
+    createUser: async (req, res, next) => {
+        try {
+            const newUsers = await userService.createUser();
+            res.status(201).json(newUsers);
+        } catch (e) {
+            next(e);
         }
-
-        if (!name || name.length < 3) { // если число не целое или меньш 18
-            return res.status(400).json('Set valid age')
-        }
-
-        const users = await fileService.reader();
-
-        const newUsers = {...req.body, id: users.length ? users[users.length - 1].id + 1 : 1};
-        await fileService.writer([...users, newUsers]);
-        res.status(201).json(newUsers);
     },
 
 
-    getUserById: async (req, res) => {
-        const {userId} = req.params;
-        const users = await fileService.reader();
-
-        const user = users.find((user) => user.id === +userId);
-
-        if (!user) {
-            return res.status(400).json(`User with id ${userId} not found`);
+    getUserById: async (req, res, next) => {
+        try {
+            const {user} = req;
+            res.json(user);
+        } catch (e) {
+            next(e);
         }
-        res.json(user);
     },
 
     updateUserById: async (req, res) => {

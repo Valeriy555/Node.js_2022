@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const dbPath = path.join(process.cwd(), 'dataBase', 'users.json')
+const dbPath = path.join(process.cwd(), 'dataBase', '')
 
 module.exports = {
     reader: async () => {
