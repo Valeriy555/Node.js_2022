@@ -1,4 +1,4 @@
-const {fileService, userService} = require("../services");
+const {userService} = require("../services");
 
 module.exports = {
 
@@ -31,50 +31,26 @@ module.exports = {
         }
     },
 
-    updateUserById: async (req, res) => {
-        const {name, age} = req.body;
-        const {userId} = req.params;
-
-        if (age && !Number.isInteger(age) || age < 18) { // если число не целое или меньш 18
-            return res.status(400).json('Set valid age')
+    updateUserById: async (req, res, next) => {
+        try {
+            const {id} = req.params;
+            const updatedUser = await userService.updateOneUser({_id: id}, req.body)
+            res.status(201).json(updatedUser);
+        } catch (e) {
+            next(e);
         }
-
-        if (name && name.length < 3) {
-            return res.status(400).json('Set valid age')
-        }
-
-        const users = await fileService.reader();
-        console.log(users);
-        const index = users.findIndex((user) => user.id === +userId);
-
-        if (index === -1) {
-            return res.status(400).json(`user with id ${userId} not found`);
-        }
-        // const updatedUser = {...users[index], ...req.body};
-        const updatedUser = Object.assign(users[index], req.body);
-
-        users.splice(index, 1);
-
-        await fileService.writer([...users, updatedUser]);
-
-        res.status(201).json(updatedUser);
     },
 
 
-    deleteUserById: async (req, res) => {
-        const {userId} = req.params;
-        const users = await fileService.reader();
+    deleteUserById: async (req, res, next) => {
 
-        const index = users.findIndex((user) => user.id === +userId);
+        try {
+            const {id} = req.params;
+            await userService.deleteOneUser({_id: id})
 
-        if (index === -1) {
-            return res.status(400).json(`User with id ${userId} not found`);
+            res.sendStatus(204);
+        } catch (e) {
+            next(e);
         }
-
-        users.splice(index, 1)
-
-        await fileService.writer(users);
-
-        res.sendStatus(204);
     },
 }

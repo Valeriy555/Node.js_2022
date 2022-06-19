@@ -2,8 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const {userRouter} = require("./routes");
+const {configs} = require("./configs");
 
-mongoose.connect('mongodb://localhost:27017/dec-2021')
+mongoose.connect(configs.MONGO_URL)
 
 
 const app = express();
@@ -24,7 +25,7 @@ app.use((err, req, res, next) => {
         });
 });
 
-app.listen(3500, () => {
-    console.log('Started on port 3500')
+app.listen(configs.PORT, () => {
+    console.log(`Started on port ${configs.PORT}`)
 });
 
