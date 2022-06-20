@@ -54,6 +54,8 @@ module.exports = {
             if (name && name.length < 3) { // если число не целое или меньш 18
                 return next(new CustomError('Set valid name'));
             }
+
+            req.dateForUpdate = {name, age};
             next();
         } catch (e) {
             next(e);

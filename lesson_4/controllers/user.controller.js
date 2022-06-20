@@ -34,7 +34,7 @@ module.exports = {
     updateUserById: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const updatedUser = await userService.updateOneUser({_id: id}, req.body)
+            const updatedUser = await userService.updateOneUser({_id: id}, req.dateForUpdate)
             res.status(201).json(updatedUser);
         } catch (e) {
             next(e);
