@@ -38,24 +38,14 @@ module.exports = {
 
     isUserValidForUpdate: async (req, res, next) => { // проверка на валидность id
         try {
-            const {name, age} = req.body;
 
-            if (age && !Number.isInteger(age) || age < 18) { // если число не целое или меньш 18
-                return next(new CustomError('Set valid age'));
+            const {error, value} = userValidator.updateUserValidator.validate(req.body);
+
+            if (error) {
+
+                return next(new CustomError(error.details[0].message));
             }
-
-            if (name && name.length < 3) { // если число не целое или меньш 18
-                return next(new CustomError('Set valid name'));
-            }
-            req.dateForUpdate = {name, age};
-
-            // const {error, value} = userValidator.updateUserValidator.validate(req.body);
-            //
-            // if (error) {
-            //
-            //     return next(new CustomError(error.details[0].message));
-            // }
-            // req.dateForUpdate = {name, age};
+            req.body = value;
 
             next();
         } catch (e) {
