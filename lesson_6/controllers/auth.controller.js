@@ -8,9 +8,9 @@ module.exports = {
         try {
 
             const {password: hashPassword, _id} = req.user;
-            const { password } = req.body;
+            const {password} = req.body;
 
-            await passwordService.comparePassword(hashPassword,password);
+            await passwordService.comparePassword(hashPassword, password);
 
             const tokens = generateAuthToken();
 
@@ -23,6 +23,21 @@ module.exports = {
                 user: req.user,
                 ...tokens
             })
+        } catch (e) {
+            next(e)
+        }
+    },
+    refreshToken: async (req, res, next) => {
+        try {
+            const {userId, refresh_token} = req.tokenI;
+
+            await OAuth.deleteOne({refresh_token});
+
+            const tokens = generateAuthToken();
+
+            await OAuth.create({userId, ...tokens})
+
+            res.json(tokens)
         } catch (e) {
             next(e)
         }

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const {CustomError} = require("../errors");
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require("../configs/configs");
+const {configs} = require("../configs");
 
 function generateAuthToken(payload = {}) {
     const access_token = jwt.sign(payload, ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
@@ -12,9 +13,13 @@ function generateAuthToken(payload = {}) {
     }
 }
 
-function checkAccessToken(token = '') {
+function checkToken(token = '', tokenType = 'access') {
     try {
-        return jwt.verify(token, 'asd');
+        let secret;
+
+        if (tokenType === 'access') secret = configs.ACCESS_TOKEN_SECRET;
+        if (tokenType === 'refresh') secret = configs.REFRESH_TOKEN_SECRET;
+        return jwt.verify(token, secret);
     } catch (e) {
         throw new CustomError(`Token not valid`, 401);
     }
@@ -22,6 +27,6 @@ function checkAccessToken(token = '') {
 }
 
 module.exports = {
-    checkAccessToken,
+    checkToken,
     generateAuthToken,
 }
