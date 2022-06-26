@@ -4,6 +4,8 @@ const authController = require('../controllers/auth.controller');
 const {authMiddleware} = require("../middlewares");
 
 router.post('/login',
+
+    authMiddleware.isLoginBodyValid,
     authMiddleware.isUserPresentForAuth,
     authController.login);
 

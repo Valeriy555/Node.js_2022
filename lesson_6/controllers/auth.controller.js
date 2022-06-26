@@ -29,7 +29,7 @@ module.exports = {
     },
     refreshToken: async (req, res, next) => {
         try {
-            const {userId, refresh_token} = req.tokenI;
+            const {userId, refresh_token} = req.tokenInfo;
 
             await OAuth.deleteOne({refresh_token});
 

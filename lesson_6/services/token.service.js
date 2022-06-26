@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const {CustomError} = require("../errors");
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require("../configs/configs");
 const {configs} = require("../configs");
+const {tokenTypeEnums} = require("../enums");
 
 function generateAuthToken(payload = {}) {
     const access_token = jwt.sign(payload, ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
@@ -13,12 +14,12 @@ function generateAuthToken(payload = {}) {
     }
 }
 
-function checkToken(token = '', tokenType = 'access') {
+function checkToken(token = '', tokenType = tokenTypeEnums.ACCESS) {
     try {
         let secret;
 
-        if (tokenType === 'access') secret = configs.ACCESS_TOKEN_SECRET;
-        if (tokenType === 'refresh') secret = configs.REFRESH_TOKEN_SECRET;
+        if (tokenType === tokenTypeEnums.ACCESS) secret = configs.ACCESS_TOKEN_SECRET;
+        if (tokenType === tokenTypeEnums.REFRESH) secret = configs.REFRESH_TOKEN_SECRET;
         return jwt.verify(token, secret);
     } catch (e) {
         throw new CustomError(`Token not valid`, 401);
