@@ -77,7 +77,7 @@ module.exports = {
         try {
             const {error, value} = await authValidator.login.validate(req.body);
 
-            if (!error) {
+            if (error) {
                 return next(new CustomError(`Wrong email or password`));
             }
 
