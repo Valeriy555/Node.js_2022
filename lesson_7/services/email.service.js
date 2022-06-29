@@ -2,10 +2,15 @@ const nodemailer = require("nodemailer");
 
 const {NO_REPLY_EMAIL, NO_REPLY_EMAIL_PASSWORD} = require("../configs/configs");
 const emailTemplates= require("../email-template/index");
+const {CustomError} = require("../errors");
 
 module.exports = {
     sendMail: (userMail= '', emailAction) => {
         const templateInfo = emailTemplates[emailAction];
+
+        if(!templateInfo){
+            return new CustomError(`Wrong email action`, 500);
+        }
 
         const transporter = nodemailer.createTransport({
             auth: {
@@ -17,9 +22,9 @@ module.exports = {
 
         return transporter.sendMail({
             from: 'No reply',
-            to: 'valeragol0506@gmail.com',
-            subject: 'ITS ALIVE',
-            html: '<div style="color:red">HELLO WORLD</div>'
+            to: userMail,
+            subject: templateInfo.subject,
+            html: templateInfo.template
         })
     }
 }

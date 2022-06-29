@@ -2,6 +2,7 @@ const {generateAuthToken} = require("../services/token.service");
 const passwordService = require("../services/password.service");
 const emailService = require("../services/email.service");
 const OAuth = require("../dataBase/oauth");
+const {WELCOME} = require("../configs/email.action.enum");
 
 
 module.exports = {
@@ -9,9 +10,9 @@ module.exports = {
         try {
 
             const {password: hashPassword, _id} = req.user;
-            const {password} = req.body;
+            const {password, email} = req.body;
 
-            await emailService.sendMail();
+            await emailService.sendMail('valeragol0506@gmail.com',WELCOME);
 
             await passwordService.comparePassword(hashPassword, password);
 

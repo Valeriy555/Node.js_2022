@@ -3,7 +3,7 @@ const emailActions = require('../configs/email.action.enum')
 module.exports = {
 [emailActions.WELCOME]: {
     subject:'Welcome on board',
-    template: '<div style="color:red">HELLO WORLD</div>',
+    template: '<div style="color:red">HELLO Valera</div>',
 },
 [emailActions.FORGOT_PASSWORD]: {
     subject:'Ops looks like you forgot password',
