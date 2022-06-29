@@ -13,6 +13,7 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.4"
+    "@types/nodemailer": "^6.4.4",
+    "@types/email-templates": "^8.0.4"
   }
 }
