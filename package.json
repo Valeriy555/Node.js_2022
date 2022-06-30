@@ -1,5 +1,5 @@
 {
-  "name": "lesson_7",
+  "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
     "start:dev": "set MODE=dev&& nodemon .",
