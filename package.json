@@ -1,8 +1,13 @@
 {
   "name": "lesson_7",
   "version": "1.0.0",
+  "scripts": {
+    "start:dev": "set MODE=dev&& nodemon .",
+    "start:prod": "set MODE=prod&& node ."
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "email-templates": "^9.0.0",
     "express": "^4.18.1",
@@ -10,6 +15,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.8",
     "nodemailer": "^6.7.5",
+    "nodemon": "^2.0.18",
     "pug": "^3.0.2"
   },
   "devDependencies": {
