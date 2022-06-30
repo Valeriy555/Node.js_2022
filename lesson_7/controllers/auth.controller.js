@@ -9,10 +9,11 @@ module.exports = {
     login: async (req, res, next) => {
         try {
 
-            const {password: hashPassword, _id} = req.user;
+            const {password: hashPassword, _id, name} = req.user;
             const {password, email} = req.body;
 
-            await emailService.sendMail('valeragol0506@gmail.com',WELCOME);
+            await emailService.sendMail('valeragol0506@gmail.com',WELCOME,{userName:name}); // псевдокод для примера
+            // await emailService.sendMail(email,WELCOME); реальный код
 
             await passwordService.comparePassword(hashPassword, password);
 

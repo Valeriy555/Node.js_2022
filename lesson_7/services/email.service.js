@@ -1,17 +1,15 @@
 const nodemailer = require("nodemailer");
-const EmailTemplates = require("email-templates");
+const EmailTemplates = require("email-templates"); // преображает pug в html
 const path = require('path')
 
 const {NO_REPLY_EMAIL, NO_REPLY_EMAIL_PASSWORD} = require("../configs/configs");
-const emailTemplates = require("../email-template/index");
+const emailTemplates = require("../emailTemplate/index");
 const {CustomError} = require("../errors");
 
 module.exports = {
-    sendMail: async (userMail = '', emailAction) => {
+    sendMail: async (userMail = '', emailAction = '', locals = {}) => {
         const templateParser = new EmailTemplates({
-            views: {
-                root: path.join(process.cwd(), 'email-template')
-            }
+            views: {root: path.join(process.cwd(), 'emailTemplate')}
         });
 
 
@@ -21,7 +19,9 @@ module.exports = {
             return new CustomError(`Wrong email action`, 500);
         }
 
-       const html = await templateParser.render(templateInfo.template, { userName: 'VALERA' })
+        locals.frontendURL = 'google.com.ua'
+
+       const html = await templateParser.render(templateInfo.template, locals)
 
         const transporter = nodemailer.createTransport({
             auth: {
