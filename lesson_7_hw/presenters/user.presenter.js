@@ -8,6 +8,6 @@ module.exports = {
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         }
-    }
+    },
 };
 

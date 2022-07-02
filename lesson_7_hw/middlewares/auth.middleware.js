@@ -1,30 +1,30 @@
-const {checkToken} = require("../services/token.service");
-const OAuth = require("../dataBase/oauth");
-const {CustomError} = require("../errors");
-const {userService} = require("../services");
-const {authValidator} = require("../validators");
-const {tokenTypeEnums} = require("../enums");
-const {constant} = require("../configs");
+const { checkToken } = require("../services/token.service");
+const { OAuth } = require("../dataBase");
+const { CustomError } = require('../errors');
+const { userService } = require('../services');
+const { authValidator } = require('../validators');
+const { tokenTypeEnum } = require('../enums');
+const { constants } = require('../configs');
 
 module.exports = {
     checkAccessToken: async (req, res, next) => {
         try {
-            const access_token = req.get(constant.AUTHORIZATION);
+            const access_token = req.get(constants.AUTHORIZATION);
 
             if (!access_token) {
-                return next(new CustomError(`No token`, 401));
+                return next(new CustomError('No token', 401));
             }
 
             checkToken(access_token);
 
-            const tokenInfo = await OAuth.findOne({access_token}).populate('userId');
+            const tokenInfo = await OAuth.findOne({ access_token }).populate('userId');
 
             if (!tokenInfo) {
-                return next(new CustomError(`Token not valid`, 401));
+                return next(new CustomError('Token not valid', 401));
             }
+
             req.access_token = tokenInfo.access_token;
             req.user = tokenInfo.userId;
-
             next();
         } catch (e) {
             next(e);
@@ -33,22 +33,21 @@ module.exports = {
 
     checkRefreshToken: async (req, res, next) => {
         try {
-            const refresh_token = req.get(constant.AUTHORIZATION);
+            const refresh_token = req.get(constants.AUTHORIZATION);
 
             if (!refresh_token) {
-                return next(new CustomError(`No token`, 401));
+                return next(new CustomError('No token', 401));
             }
 
-            checkToken(refresh_token, tokenTypeEnums.REFRESH);
+            checkToken(refresh_token, tokenTypeEnum.REFRESH);
 
-            const tokenInfo = await OAuth.findOne({refresh_token});
+            const tokenInfo = await OAuth.findOne({ refresh_token });
 
             if (!tokenInfo) {
-                return next(new CustomError(`Token not valid`, 401));
+                return next(new CustomError('Token not valid', 401));
             }
 
             req.tokenInfo = tokenInfo;
-
             next();
         } catch (e) {
             next(e);
@@ -57,16 +56,15 @@ module.exports = {
 
     isUserPresentForAuth: async (req, res, next) => {
         try {
-            const {email} = req.body;
+            const { email } = req.body;
 
-            const user = await userService.findOneUser({email});
+            const user = await userService.findOneUser({ email });
 
             if (!user) {
-                return next(new CustomError(`Wrong email or password`));
+                return next(new CustomError('Wrong email or password'));
             }
 
             req.user = user;
-
             next();
         } catch (e) {
             next(e);
@@ -75,14 +73,45 @@ module.exports = {
 
     isLoginBodyValid: async (req, res, next) => {
         try {
-            const {error, value} = await authValidator.login.validate(req.body);
+            const { error, value } = await authValidator.login.validate(req.body);
 
             if (error) {
-                return next(new CustomError(`Wrong email or password`));
+                return next(new CustomError('Wrong email or password'));
             }
 
             req.body = value;
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 
+    isEmailValid: async (req, res, next) => {
+        try {
+            const { error, value } = await authValidator.forgotPassword.validate(req.body);
+
+            if (error) {
+                return next(new CustomError('Wrong email'));
+            }
+
+            req.body = value;
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    isUserPresentByEmail: async (req, res, next) => {
+        try {
+            const { email } = req.body;
+
+            const user = await userService.findOneUser({ email });
+
+            if (!user) {
+                return next(new CustomError('Wrong email'));
+            }
+
+            req.user = user;
             next();
         } catch (e) {
             next(e);

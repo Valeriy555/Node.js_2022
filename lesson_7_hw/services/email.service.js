@@ -1,10 +1,10 @@
-const nodemailer = require("nodemailer");
-const hbs = require('nodemailer-express-handlebars')
-const path = require('path')
+const nodemailer = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 
-const {configs} = require("../configs");
-const emailTemplates = require("../emailTemplate");
-const {CustomError} = require("../errors");
+const { configs } = require('../configs');
+const emailTemplates = require('../email-templates');
+const { CustomError } = require("../errors");
 
 module.exports = {
     sendMail: async (userMail = '', emailAction = '', context = {}) => {
@@ -12,7 +12,7 @@ module.exports = {
             from: 'No reply',
             auth: {
                 user: configs.NO_REPLY_EMAIL,
-                pass: configs.NO_REPLY_EMAIL_PASSWORD
+                pass: configs.NO_REPLY_EMAIL_PASSWORD,
             },
             service: 'gmail',
         });
@@ -21,28 +21,28 @@ module.exports = {
             viewEngine: {
                 extname: '.hbs',
                 defaultLayout: 'main',
-                layoutDir: path.join(process.cwd(),'lesson_7_hw','emailTemplate','layouts'),
-                partialsDir: path.join(process.cwd(),'lesson_7_hw','emailTemplate','partials'),
+                layoutsDir: path.join(process.cwd(),'lesson_7_hw', 'email-templates', 'layouts'),
+                partialsDir: path.join(process.cwd(),'lesson_7_hw', 'email-templates', 'partials'),
             },
-            viewPath: path.join(process.cwd(),'lesson_7_hw','emailTemplate'),
+            viewPath: path.join(process.cwd(),'lesson_7_hw', 'email-templates', 'views'),
             extName: '.hbs',
         }
 
-        transporter.use('compile', hbs(hbsOptions))
-
+        transporter.use('compile', hbs(hbsOptions));
 
         const templateInfo = emailTemplates[emailAction];
         if (!templateInfo) {
-            return new CustomError(`Wrong email action`, 500);
+            throw new CustomError('Wrong email action', 500);
         }
 
-        context.frontendURL = configs.FRONTEND_URL
+        context.frontendURL = configs.FRONTEND_URL;
 
+        console.log(`Email start sending | email: ${userMail} | action: ${emailAction}`);
         return transporter.sendMail({
             to: userMail,
             subject: templateInfo.subject,
             template: templateInfo.template,
             context,
-        })
+        });
     }
 }

@@ -1,13 +1,13 @@
-const {Types} = require('mongoose');
-const {CustomError} = require("../errors");
+const { Types } = require('mongoose');
+const { CustomError } = require('../errors');
 
 module.exports = {
-    isIdValid: (req, res, next) => { // проверка на валидность id
+    isIdValid: (req, res, next) => {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
 
             if (!Types.ObjectId.isValid(id)) {
-                return next(new CustomError('Not valid ID'))
+                return next(new CustomError('Not valid ID'));
             }
 
             next();

@@ -1,13 +1,14 @@
-const {userService, passwordService, emailService} = require("../services");
-const {userPresenter} = require("../presenters/user.presenter");
-const {emailActionTypeEnums} = require("../enums");
+const { userService, passwordService, emailService } = require('../services');
+const { userPresenter } = require('../presenters/user.presenter');
+const { emailActionTypeEnum } = require('../enums');
 
 module.exports = {
-
     findUsers: async (req, res, next) => {
         try {
             const users = await userService.findUsers(req.query).exec();
+
             const usersForResponse = users.map(u => userPresenter(u));
+
             res.json(usersForResponse);
         } catch (e) {
             next(e);
@@ -16,14 +17,15 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-
-            const {email, password, name} = req.body;
+            const { email, password, name } = req.body;
             const hash = await passwordService.hashPassword(password);
-            const newUsers = await userService.createUser({...req.body, password: hash});
 
+            const newUser = await userService.createUser({ ...req.body, password: hash });
 
+            await emailService.sendMail(email, emailActionTypeEnum.WELCOME, { name });
 
-            const userForResponse = userPresenter(newUsers);
+            const userForResponse = userPresenter(newUser);
+
             res.status(201).json(userForResponse);
         } catch (e) {
             next(e);
@@ -32,7 +34,7 @@ module.exports = {
 
     getUserById: async (req, res, next) => {
         try {
-            const {user} = req;
+            const { user } = req;
 
             const userForResponse = userPresenter(user);
 
@@ -44,23 +46,27 @@ module.exports = {
 
     updateUserById: async (req, res, next) => {
         try {
-            const {id} = req.params;
-            const updatedUser = await userService.updateOneUser({_id: id}, req.body)
-            res.status(201).json(updatedUser);
+            const { id } = req.params;
+
+            const updatedUser = await userService.updateOneUser({ _id: id }, req.body);
+
+            const userForResponse = userPresenter(updatedUser);
+
+            res.status(201).json(userForResponse);
         } catch (e) {
             next(e);
         }
     },
 
     deleteUserById: async (req, res, next) => {
-
         try {
-            const {id} = req.params;
-            await userService.deleteOneUser({_id: id})
+            const { id } = req.params;
+
+            await userService.deleteOneUser({ _id: id })
 
             res.sendStatus(204);
         } catch (e) {
             next(e);
         }
     },
-}
+};

@@ -3,4 +3,4 @@ module.exports = {
     ORDER_PROCESS: 'ORDER_PROCESS',
     WELCOME: 'WELCOME',
     LOGOUT: 'LOGOUT',
-}
+};
