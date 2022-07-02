@@ -1,41 +1,48 @@
 const nodemailer = require("nodemailer");
-const EmailTemplates = require("email-templates"); // преображает pug в html
+const hbs = require('nodemailer-express-handlebars')
 const path = require('path')
 
-const {NO_REPLY_EMAIL, NO_REPLY_EMAIL_PASSWORD} = require("../configs/configs");
-const emailTemplates = require("../emailTemplate/index");
+const {configs} = require("../configs");
+const emailTemplates = require("../emailTemplate");
 const {CustomError} = require("../errors");
 
 module.exports = {
-    sendMail: async (userMail = '', emailAction = '', locals = {}) => {
-        const templateParser = new EmailTemplates({
-            views: {root: path.join(process.cwd(), 'emailTemplate')}
+    sendMail: async (userMail = '', emailAction = '', context = {}) => {
+        const transporter = nodemailer.createTransport({
+            from: 'No reply',
+            auth: {
+                user: configs.NO_REPLY_EMAIL,
+                pass: configs.NO_REPLY_EMAIL_PASSWORD
+            },
+            service: 'gmail',
         });
+
+        const hbsOptions = {
+            viewEngine: {
+                extname: '.hbs',
+                defaultLayout: 'main',
+                layoutDir: path.join(process.cwd(),'lesson_7_hw','emailTemplate','layouts'),
+                partialsDir: path.join(process.cwd(),'lesson_7_hw','emailTemplate','partials'),
+            },
+            viewPath: path.join(process.cwd(),'lesson_7_hw','emailTemplate'),
+            extName: '.hbs',
+        }
+
+        transporter.use('compile', hbs(hbsOptions))
 
 
         const templateInfo = emailTemplates[emailAction];
-
         if (!templateInfo) {
             return new CustomError(`Wrong email action`, 500);
         }
 
-        locals.frontendURL = 'google.com.ua'
-
-       const html = await templateParser.render(templateInfo.template, locals)
-
-        const transporter = nodemailer.createTransport({
-            auth: {
-                user: NO_REPLY_EMAIL,
-                pass: NO_REPLY_EMAIL_PASSWORD
-            },
-            service: 'gmail'
-        });
+        context.frontendURL = configs.FRONTEND_URL
 
         return transporter.sendMail({
-            from: 'No reply',
             to: userMail,
             subject: templateInfo.subject,
-            html
+            template: templateInfo.template,
+            context,
         })
     }
 }

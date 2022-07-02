@@ -1,5 +1,6 @@
-const {userService, passwordService} = require("../services");
+const {userService, passwordService, emailService} = require("../services");
 const {userPresenter} = require("../presenters/user.presenter");
+const {emailActionTypeEnums} = require("../enums");
 
 module.exports = {
 
@@ -15,8 +16,12 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-            const hash = await passwordService.hashPassword(req.body.password);
+
+            const {email, password, name} = req.body;
+            const hash = await passwordService.hashPassword(password);
             const newUsers = await userService.createUser({...req.body, password: hash});
+
+
 
             const userForResponse = userPresenter(newUsers);
             res.status(201).json(userForResponse);

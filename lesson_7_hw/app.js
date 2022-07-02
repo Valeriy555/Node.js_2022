@@ -1,12 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-require('dotenv').config({ path: path.join(process.cwd(), 'environments', `${process.env.MODE}.env`)})
+
+require('dotenv').config({ path: path.join(__dirname, 'environments', `${process.env.MODE}.env`)})
 
 const {userRouter, authRouter} = require("./routes");
 const {configs} = require("./configs");
 
-mongoose.connect(configs.MONGO_URL)
+mongoose.connect(configs.MONGO_URL);
 
 
 const app = express();

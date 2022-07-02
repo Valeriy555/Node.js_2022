@@ -1,13 +1,17 @@
-const emailActions = require('../configs/email.action.enum')
+const {emailActionTypeEnums} = require('../enums')
 
 module.exports = {
-[emailActions.WELCOME]: {
+[emailActionTypeEnums.WELCOME]: {
     subject:'Welcome on board',
-    template: 'welcome',
+    template: 'welcome.hbs',
 },
-[emailActions.FORGOT_PASSWORD]: {
+[emailActionTypeEnums.FORGOT_PASSWORD]: {
     subject:'Ops looks like you forgot password',
     template: 'forgot-password',
-}
+},
+    [emailActionTypeEnums.LOGOUT]: {
+        subject:'User was logout',
+        template: 'logout',
+    },
 
 }
