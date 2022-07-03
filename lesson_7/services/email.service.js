@@ -3,13 +3,13 @@ const EmailTemplates = require("email-templates"); // преображает pug
 const path = require('path')
 
 const {NO_REPLY_EMAIL, NO_REPLY_EMAIL_PASSWORD} = require("../configs/configs");
-const emailTemplates = require("../emailTemplate/index");
+const emailTemplates = require("../email-templates");
 const {CustomError} = require("../errors");
 
 module.exports = {
     sendMail: async (userMail = '', emailAction = '', locals = {}) => {
         const templateParser = new EmailTemplates({
-            views: {root: path.join(process.cwd(), 'emailTemplate')}
+            views: {root: path.join(process.cwd(), 'email-templates')}
         });
 
 
