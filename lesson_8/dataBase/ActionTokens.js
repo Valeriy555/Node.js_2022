@@ -3,7 +3,7 @@ const {Schema, model} = require('mongoose');
 const emailActions = require('../enums/email-action.enum');
 
 
-const ActionTokensShema  = new Schema({
+const ActionTokensSchema  = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'user',
@@ -24,4 +24,4 @@ const ActionTokensShema  = new Schema({
 
 }, {timestamp: true});
 
-module.exports = model('action_tokens', ActionTokensShema);
+module.exports = model('action_tokens', ActionTokensSchema);

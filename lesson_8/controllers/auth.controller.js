@@ -1,17 +1,16 @@
 const {generateAuthTokens, generateActionToken} = require('../services/token.service');
 const {passwordService, emailService} = require('../services');
-const {OAuth, ActionTokens} = require('../dataBase');
+const {OAuth, ActionTokens, User} = require('../dataBase');
 const {emailActionTypeEnum} = require('../enums');
-
 
 
 module.exports = {
     login: async (req, res, next) => {
         try {
-            const {password: hashPassword, _id} = req.user;
+            const {password: hashPassword, _id,name} = req.user;
             const {password} = req.body;
 
-            await emailService.sendMail('valeragol0506@gmail.com', emailActionTypeEnum.WELCOME, {userName: name}); //TEST CODE
+            await emailService.sendMail('valeragol0506@gmail.com', emailActionTypeEnum.WELCOME, { name }); //TEST CODE
 
 
             await passwordService.comparePassword(hashPassword, password);
@@ -92,9 +91,25 @@ module.exports = {
 
             await emailService.sendMail('valeragol0506@gmail.com',                        // TEST CODE
                 emailActionTypeEnum.FORGOT_PASSWORD,
-                {name});
+                { name, actionToken});
 
             res.sendStatus(204);
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    setForgotPassword: async (req, res, next) => {
+        try {
+            const {_id} = req.user;
+            const {password} = req.body;
+
+            const hashPassword = await passwordService.hashPassword(password);
+            const updatedUser = await User.findByIdAndUpdate(_id, {password: hashPassword}, {new: true});
+
+
+            await ActionTokens.deleteOne({actionType: emailActionTypeEnum.FORGOT_PASSWORD, userId: _id})
+            res.json(updatedUser)
         } catch (e) {
             next(e);
         }

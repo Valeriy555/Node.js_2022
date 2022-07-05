@@ -2,8 +2,10 @@ const jwt = require('jsonwebtoken');
 
 const {configs} = require("../configs");
 const {CustomError} = require('../errors');
-const {tokenTypeEnum} = require('../enums');
-const {FORGOT_PASSWORD} = require("../enums/email-action.enum");
+const {tokenTypeEnum, emailActionTypeEnum} = require('../enums');
+
+
+
 
 
 function generateAuthTokens(payload = {}) {
@@ -34,7 +36,7 @@ function generateActionToken(actionType, payload = {}) {
     let expiresIn = '7d';
 
     switch (actionType) {
-        case FORGOT_PASSWORD:
+        case emailActionTypeEnum.FORGOT_PASSWORD:
             secretWord = configs.FORGOT_PASS_ACTION_SECRET;
             break;
 
@@ -44,12 +46,27 @@ function generateActionToken(actionType, payload = {}) {
     }
 
     return  jwt.sign(payload,secretWord, {expiresIn});
+}
+
+function checkActionToken(token = '', actionType) {
+    let secretWord = '';
 
 
+    switch (actionType) {
+        case emailActionTypeEnum.FORGOT_PASSWORD:
+            secretWord = configs.FORGOT_PASS_ACTION_SECRET;
+            break;
+
+        default:
+            throw new CustomError('Wrong action type', 500);
+    }
+
+    return jwt.verify(token, secretWord);
 }
 
 module.exports = {
     checkToken,
+    checkActionToken,
     generateAuthTokens,
     generateActionToken
 }
