@@ -2,8 +2,8 @@
   "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
-    "start:dev": "set MODE=dev&& nodemon ./lesson_7_hw/app.js",
-    "start:prod": "set MODE=prod&& node ./lesson_7_hw/app.js"
+    "start:dev": "set MODE=dev&& nodemon ./lesson_8/app.js",
+    "start:prod": "set MODE=prod&& node ./lesson_8/app.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
