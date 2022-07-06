@@ -2,14 +2,16 @@
   "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
-    "start:dev": "set MODE=dev&& nodemon ./lesson_8/app.js",
-    "start:prod": "set MODE=prod&& node ./lesson_8/app.js"
+    "start:dev": "set MODE=dev&& nodemon ./lesson_9/app.js",
+    "start:prod": "set MODE=prod&& node ./lesson_9/app.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.1168.0",
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1",
     "email-templates": "^9.0.0",
+    "express": "^4.18.1",
+    "express-fileupload": "^1.4.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.8",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.4",
+    "@types/express-fileupload": "^1.2.2",
     "@types/email-templates": "^8.0.4"
   }
 }
