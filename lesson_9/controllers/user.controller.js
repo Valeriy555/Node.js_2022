@@ -19,6 +19,9 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
+            console.log('------------------*****---------------------')
+            console.log(req.files.userAvatar)
+            console.log('------------------*****---------------------')
             const avatar = 'asd';
 
             const { email, password, name } = req.body;

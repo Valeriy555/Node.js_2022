@@ -15,9 +15,9 @@ const uploadFile = async (file) => {
     return BuketConfig
         .upload({
             Bucket: AWS_S3_BUCKET,
-            Key: 'file.jpg',
+            Key: file.name,
             ACL: "public-read",
-            Body: new Buffer('bufer body')
+            Body: file.data
         })
         .promise()
 }
