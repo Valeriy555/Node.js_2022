@@ -10,9 +10,10 @@ const {configs} = require("./configs");
 
 mongoose.connect(configs.MONGO_URL);
 
-
 const app = express();
+
 app.use(express.json());
+app.use(express.urlencoded({extended: true}))
 
 app.use(expressFileUpload())
 app.use('/auth', authRouter);

@@ -20,9 +20,9 @@ module.exports = {
     createUser: async (req, res, next) => {
         try {
             console.log('------------------*****---------------------')
-            console.log(req.files.userAvatar)
+            console.log(req.files)
             console.log('------------------*****---------------------')
-            const avatar = 'asd';
+
 
             const { email, password, name } = req.body;
 
@@ -30,7 +30,7 @@ module.exports = {
 
             const newUser = await userService.createUser({ ...req.body, password: hash });
 
-            const {Location} = await uploadFile(avatar);
+            const {Location} = await uploadFile(req.files.userAvatar);
 
             const user = await User.createWithHashPassword({ ...req.body, avatar: Location });
 
