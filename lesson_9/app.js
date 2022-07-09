@@ -1,6 +1,6 @@
 const express = require('express');
-const expressFileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
+const expressFileUpload = require('express-fileupload');
 const path = require('path');
 
 require('dotenv').config({ path: path.join(__dirname, 'environments', `${process.env.MODE}.env`)})

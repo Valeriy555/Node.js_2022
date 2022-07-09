@@ -1,42 +1,66 @@
 const S3 = require('aws-sdk/clients/s3');
-
-const {configs} = require("../configs");
 const path = require("path");
 const uuid = require('uuid').v4;
 
+const {configs} = require("../configs");
 
 
-const BuketConfig = new S3({
+const BucketConfig = new S3({
     region: configs.AWS_S3_REGION,
     secretAccessKey: configs.AWS_S3_SECRET_KEY,
-    accessKeyId: configs.AWS_S3_ACCESS_KEY
-})
+    accessKeyId: configs.AWS_S3_ACCESS_KEY,
+});
 
 
 const uploadFile = async (file, itemType, itemId) => {
     const Key = _buildFilePath(file.name, itemType, itemId);
-    return BuketConfig
+
+    return BucketConfig
         .upload({
-            Bucket:configs.AWS_S3_BUCKET,
+            Bucket: configs.AWS_S3_BUCKET,
             Key,
+            ContentType: file.mimetype,
             ACL: "public-read",
             Body: file.data
         })
-        .promise()
+        .promise();
+}
+
+const updateFile = async (file, fileURL) => {
+    const path = fileURL.split(configs.AWS_S3_BUCKET_URL).pop();
+
+    return BucketConfig
+        .putObject({
+            Bucket: configs.AWS_S3_BUCKET,
+            Key: path,
+            ContentType: file.mimetype,
+            ACL: "public-read",
+            Body: file.data
+        })
+        .promise();
+}
+
+const deleteFile = async (fileURL) => {
+    const path = fileURL.split(configs.AWS_S3_BUCKET_URL).pop();
+
+    return BucketConfig
+        .deleteObject({
+            Bucket: configs.AWS_S3_BUCKET,
+            Key: path,
+        })
+        .promise();
 }
 
 module.exports = {
-    uploadFile
+    uploadFile,
+    updateFile,
+    deleteFile
 }
 
-function _buildFilePath(fileName ='', itemType,itemId ) {
-    const ext1 = fileName.split('.').pop(); // вернет jpg
+function _buildFilePath(fileName = '', itemType, itemId) {
 
-    return `${itemType}/${itemId}/${uuid()}.${ext1}`
+    const ext = path.extname(fileName); //  вернет .jpg
 
-
-    const ext2 = path.extname(fileName); //  вернет .jp
-
-    return `${itemType}/${itemId}/${Date.now()}${ext2}` // второй способ
-    
+    return `${itemType}/${itemId}/${uuid()}${ext}`;
 }
+

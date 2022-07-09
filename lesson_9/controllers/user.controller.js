@@ -1,8 +1,7 @@
-const { userService, passwordService, emailService } = require('../services');
-const { userPresenter } = require('../presenters/user.presenter');
-const { emailActionTypeEnum } = require('../enums');
-const {uploadFile} = require("../services/s3.service");
-const {User} = require("../dataBase");
+const {userService, passwordService, emailService, s3Service} = require('../services');
+const {userPresenter} = require('../presenters/user.presenter');
+const {emailActionTypeEnum} = require('../enums');
+
 
 module.exports = {
     findUsers: async (req, res, next) => {
@@ -20,29 +19,22 @@ module.exports = {
     createUser: async (req, res, next) => {
         try {
 
-            const { email, password, name } = req.body;
+            const {email, password, name} = req.body;
 
             const hash = await passwordService.hashPassword(password);
 
-            const newUser = await userService.createUser({ ...req.body, password: hash });
+            const user = await userService.createUser({...req.body, password: hash});
 
-            await emailService.sendMail(email, emailActionTypeEnum.WELCOME, { name });
+            const {Location} = await s3Service.uploadFile(req.files.avatar, 'user', user._id);
 
-            const userForResponse = userPresenter(newUser);
+            const userWithPhoto = await userService.updateOneUser({_id: user._id}, {avatar: Location})
 
+            await emailService.sendMail(email, emailActionTypeEnum.WELCOME, {name});
 
-            console.log('------------------*****---------------------')
-            console.log(req.files)
-            console.log('------------------*****---------------------')
-
-            const user = await User.createWithHashPassword(req.body);
-
-            const {Location} = await uploadFile(req.files.userAvatar,'user',user._id);
-
-            const userWithPhoto = await User.findByIdAndUpdate(user._id,{avatar: Location}, {new: true} )
+            const userForResponse = userPresenter(userWithPhoto);
 
             res.status(201).json(userForResponse);
-            res.status(201).json(userWithPhoto);
+
         } catch (e) {
             next(e);
         }
@@ -50,7 +42,7 @@ module.exports = {
 
     getUserById: async (req, res, next) => {
         try {
-            const { user } = req;
+            const {user} = req;
 
             const userForResponse = userPresenter(user);
 
@@ -62,9 +54,18 @@ module.exports = {
 
     updateUserById: async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
 
-            const updatedUser = await userService.updateOneUser({ _id: id }, req.body);
+            if (req.files?.avatar) {
+                if (req.user.avatar) {
+                    const {Location} = await s3Service.uploadFile(req.files.avatar, 'user', id);
+                    req.body.avatar = Location;
+                } else {
+                    const {Location} = await s3Service.updateFile(req.files.avatar, req.user.avatar);
+                    req.body.avatar = Location;
+                }
+            }
+            const updatedUser = await userService.updateOneUser({_id: id}, req.body);
 
             const userForResponse = userPresenter(updatedUser);
 
@@ -76,9 +77,13 @@ module.exports = {
 
     deleteUserById: async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
 
-            await userService.deleteOneUser({ _id: id })
+            await userService.deleteOneUser({_id: id});
+
+            if (req.user.avatar) {
+                await s3Service.deleteFile(req.user.avatar);
+            }
 
             res.sendStatus(204);
         } catch (e) {

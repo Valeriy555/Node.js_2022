@@ -22,12 +22,13 @@ const UserSchema = new Schema({
 
     },
 
-    avatar: String,
-
     password:{
         type: String,
         required: true
-    }
+    },
+
+    avatar: String,
+
 }, {timestamp:true});
 
 module.exports = model('user',UserSchema);
