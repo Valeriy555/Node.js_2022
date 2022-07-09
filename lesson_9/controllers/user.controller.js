@@ -19,10 +19,6 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-            console.log('------------------*****---------------------')
-            console.log(req.files)
-            console.log('------------------*****---------------------')
-
 
             const { email, password, name } = req.body;
 
@@ -30,15 +26,23 @@ module.exports = {
 
             const newUser = await userService.createUser({ ...req.body, password: hash });
 
-            const {Location} = await uploadFile(req.files.userAvatar);
-
-            const user = await User.createWithHashPassword({ ...req.body, avatar: Location });
-
             await emailService.sendMail(email, emailActionTypeEnum.WELCOME, { name });
 
             const userForResponse = userPresenter(newUser);
 
-            res.status(201).json(userForResponse, user);
+
+            console.log('------------------*****---------------------')
+            console.log(req.files)
+            console.log('------------------*****---------------------')
+
+            const user = await User.createWithHashPassword(req.body);
+
+            const {Location} = await uploadFile(req.files.userAvatar,'user',user._id);
+
+            const userWithPhoto = await User.findByIdAndUpdate(user._id,{avatar: Location}, {new: true} )
+
+            res.status(201).json(userForResponse);
+            res.status(201).json(userWithPhoto);
         } catch (e) {
             next(e);
         }

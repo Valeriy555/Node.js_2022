@@ -1,7 +1,9 @@
 const S3 = require('aws-sdk/clients/s3');
 
 const {configs} = require("../configs");
-const {AWS_S3_BUCKET} = require("../configs/configs");
+const path = require("path");
+const uuid = require('uuid').v4;
+
 
 
 const BuketConfig = new S3({
@@ -11,11 +13,12 @@ const BuketConfig = new S3({
 })
 
 
-const uploadFile = async (file) => {
+const uploadFile = async (file, itemType, itemId) => {
+    const Key = _buildFilePath(file.name, itemType, itemId);
     return BuketConfig
         .upload({
-            Bucket: AWS_S3_BUCKET,
-            Key: file.name,
+            Bucket:configs.AWS_S3_BUCKET,
+            Key,
             ACL: "public-read",
             Body: file.data
         })
@@ -24,4 +27,16 @@ const uploadFile = async (file) => {
 
 module.exports = {
     uploadFile
+}
+
+function _buildFilePath(fileName ='', itemType,itemId ) {
+    const ext1 = fileName.split('.').pop(); // вернет jpg
+
+    return `${itemType}/${itemId}/${uuid()}.${ext1}`
+
+
+    const ext2 = path.extname(fileName); //  вернет .jp
+
+    return `${itemType}/${itemId}/${Date.now()}${ext2}` // второй способ
+    
 }
