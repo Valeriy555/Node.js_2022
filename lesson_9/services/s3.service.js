@@ -49,7 +49,7 @@ const deleteFile = async (fileURL) => {
             Key: path,
         })
         .promise();
-}
+};
 
 module.exports = {
     uploadFile,
