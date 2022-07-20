@@ -23,6 +23,7 @@ module.exports = {
 
             const hash = await passwordService.hashPassword(password);
 
+            const user = await userService.createUser({ ...req.body, password: hash });
 
             const {Location} = await s3Service.uploadFile(req.files.avatar, 'user', user._id);
 

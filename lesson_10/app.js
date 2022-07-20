@@ -20,7 +20,7 @@ app.use('/auth', authRouter);
 app.use('/users', userRouter);
 
 app.use('*', (req, res) => {
-    res.status(404).json('Page not found');
+    res.status(404).json('Route not found');
 });
 
 app.use((err, req, res, next) => {

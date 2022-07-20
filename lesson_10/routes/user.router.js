@@ -3,9 +3,14 @@ const router = require('express').Router();
 const { userController } = require('../controllers');
 const { commonMiddleware, userMiddleware, authMiddleware, fileMiddleware} = require('../middlewares');
 
+// router.get('/',
+//     userMiddleware.isUserQueryValid,
+//     userController.findUsers);
+
 router.get('/',
-    userMiddleware.isUserQueryValid,
-    userController.findUsers);
+    // userMiddleware.isUserQueryValid,
+    userController.findUsersWithPagination);
+
 router.post('/',
     userMiddleware.isUserValidForCreate,
     fileMiddleware.checkUserAvatar,

@@ -4,17 +4,32 @@ const {emailActionTypeEnum} = require('../enums');
 
 
 module.exports = {
-    findUsers: async (req, res, next) => {
+    // findUsers: async (req, res, next) => {
+    //     try {
+    //
+    //         const users = await userService.findUsers(req.query).exec();
+    //
+    //         const usersForResponse = users.map(u => userPresenter(u));
+    //
+    //         res.json(usersForResponse);
+    //
+    //     } catch (e) {
+    //         next(e);
+    //     }
+    // },
+
+    findUsersWithPagination: async (req, res, next) => {
         try {
-            const users = await userService.findUsers(req.query).exec();
 
-            const usersForResponse = users.map(u => userPresenter(u));
+         const paginationResponse = await userService.findUsersWithPagination(req.query);
 
-            res.json(usersForResponse);
+            res.json(paginationResponse);
+
         } catch (e) {
             next(e);
         }
     },
+
 
     createUser: async (req, res, next) => {
         try {
@@ -23,6 +38,7 @@ module.exports = {
 
             const hash = await passwordService.hashPassword(password);
 
+            const user = await userService.createUser({...req.body, password: hash});
 
             const {Location} = await s3Service.uploadFile(req.files.avatar, 'user', user._id);
 
@@ -76,11 +92,11 @@ module.exports = {
 
     deleteUserById: async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
 
-            await userService.deleteOneUser({ _id: id });
+            await userService.deleteOneUser({_id: id});
 
-            if  (req.user.avatar) {
+            if (req.user.avatar) {
                 await s3Service.deleteFile(req.user.avatar);
             }
 

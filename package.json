@@ -2,9 +2,8 @@
   "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
-    "start": "node ./lesson_9/app.js",
-    "start:dev": "set MODE=dev&& nodemon ./lesson_9/app.js",
-    "start:prod": "set MODE=prod&& node ./lesson_9/app.js"
+    "start:dev": "set MODE=dev&& nodemon ./lesson_10/app.js",
+    "start:prod": "set MODE=prod&& node ./lesson_10/app.js"
   },
   "dependencies": {
     "aws-sdk": "^2.1168.0",
