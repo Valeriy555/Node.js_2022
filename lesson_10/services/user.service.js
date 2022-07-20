@@ -7,10 +7,23 @@ module.exports = {
 
     findUsersWithPagination: async (query = {}) => {
         const {page = 1, perPage = 5, ...otherFilters } = query;
+
+        const searchObject = {};
+
+        if (otherFilters.search){
+            Object.assign(searchObject,{
+                $or: [
+                    {name: {$regex: otherFilters.search, $options: 'i'}},
+                    {email: {$regex: otherFilters.search, $options: 'i'}}
+                ]
+            })
+        }
+
+
         const skip = (page - 1) * perPage;
 
-        const users = await User.find().skip(skip).limit(perPage);
-        const usersCount = await User.countDocuments();
+        const users = await User.find(searchObject).skip(skip).limit(perPage);
+        const usersCount = await User.countDocuments(searchObject);
 
         return {
             page,

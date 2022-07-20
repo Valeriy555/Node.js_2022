@@ -8,7 +8,7 @@ const { commonMiddleware, userMiddleware, authMiddleware, fileMiddleware} = requ
 //     userController.findUsers);
 
 router.get('/',
-    // userMiddleware.isUserQueryValid,
+    userMiddleware.isUserQueryValid,
     userController.findUsersWithPagination);
 
 router.post('/',
