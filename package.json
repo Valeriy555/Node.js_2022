@@ -2,8 +2,8 @@
   "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
-    "start:dev": "set MODE=dev&& nodemon ./lesson_10/app.js",
-    "start:prod": "set MODE=prod&& node ./lesson_10/app.js"
+    "start:dev": "set MODE=dev&& nodemon ./lesson_11/app.js",
+    "start:prod": "set MODE=prod&& node ./lesson_11/app.js"
   },
   "dependencies": {
     "aws-sdk": "^2.1168.0",
@@ -19,6 +19,7 @@
     "nodemailer-express-handlebars": "^5.0.0",
     "nodemon": "^2.0.18",
     "pug": "^3.0.2",
+    "socket.io": "^4.5.1",
     "twilio": "^3.78.0",
     "uuid": "^8.3.2"
   },
