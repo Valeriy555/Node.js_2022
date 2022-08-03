@@ -2,7 +2,7 @@
   "name": "node.js_2022",
   "version": "1.0.0",
   "scripts": {
-    "start": "set MODE=prod&& node ./lesson_10/app.js",
+    "start": "set MODE=dev&& node ./lesson_10/app.js",
     "start:dev": "set MODE=dev&& nodemon ./lesson_10/app.js",
     "start:prod": "set MODE=prod&& node ./lesson_10/app.js"
   },
