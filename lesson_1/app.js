@@ -1,12 +1,14 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-const sortFolder = async (read, gender, write) => {
+const sortFolder = async (readFolder, gender, write) => {
     try {
-        const files = await fs.readdir(path.join(__dirname, read));
+        const folderPath = path.join(path.join(__dirname, readFolder))
+
+        const files = await fs.readdir(folderPath);
 
         for (const file of files) {
-            const redFolderPath = path.join(__dirname, read, file);
+            const redFolderPath = path.join(folderPath, file);
             const data = await fs.readFile(redFolderPath);
             const user = JSON.parse(data.toString());
 
