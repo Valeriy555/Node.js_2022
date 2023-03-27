@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const {userRouter} = require("./routes");
 const {configs} = require("./configs");
 
-mongoose.connect(configs.MONGO_URL)
+
 
 
 const app = express();
@@ -25,7 +25,8 @@ app.use((err, req, res, next) => {
         });
 });
 
-app.listen(configs.PORT, () => {
+app.listen(configs.PORT, async () => {
     console.log(`Started on port ${configs.PORT}`)
+    await mongoose.connect(configs.MONGO_URL)
 });
 
